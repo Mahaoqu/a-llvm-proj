@@ -36,7 +36,7 @@ static void InitializeModule() {
 
 Function *createFunction(Type *Ret_type, ArrayRef<Type *> Params,
                          std::string Name, bool isVarArg = false) {
-  // 参数列表 int ->(int int) 不是可变参数
+  // int -> (int int)
   auto func_Type = FunctionType::get(Ret_type, Params, isVarArg);
 
   auto func = Function::Create(func_Type, Function::ExternalLinkage, Name,
@@ -53,16 +53,12 @@ void setFuncArgs(Function *Func, SmallVector<std::string> FuncArgs) {
 }
 
 void createBasicBlock(Function *func) {
-  // 创建基本块
   auto entry = BasicBlock::Create(*my_Context, "entry", func);
-  // then else 基本快
   auto then_Build = BasicBlock::Create(*my_Context, "then", func);
   auto else_Build = BasicBlock::Create(*my_Context, "else", func);
-  // ret 基本块
   auto ret_Build = BasicBlock::Create(*my_Context, "ret", func);
 
   my_Builder->SetInsertPoint(entry);
-  // 局部变量c
   auto c = my_Builder->CreateAlloca(my_Builder->getInt32Ty(), nullptr, "c");
   auto cmp_ret = my_Builder->CreateICmpSLT(func->getArg(0), func->getArg(1));
   my_Builder->CreateCondBr(cmp_ret, then_Build, else_Build);
@@ -75,35 +71,26 @@ void createBasicBlock(Function *func) {
   my_Builder->CreateStore(func->getArg(1), c);
   my_Builder->CreateBr(ret_Build);
 
-  // 创建返回值
   my_Builder->SetInsertPoint(ret_Build);
   auto c_var = my_Builder->CreateLoad(my_Builder->getInt32Ty(), c);
   my_Builder->CreateRet(c_var);
 }
 
 int main(int argc, char *argv[]) {
-  // 初始化
   InitializeModule();
 
   auto my_int32_t = my_Builder->getInt32Ty();
-
-  // 参数类型
   SmallVector<Type *, 2> Args;
 
   for (int i = 0; i < 2; i++) {
     Args.push_back(my_int32_t);
   }
-  // 创建函数
   auto func = createFunction(my_int32_t, Args, "max");
 
-  // 设置参数名
   SmallVector<std::string> param{"val1", "val2"};
   setFuncArgs(func, param);
 
-  // 创建基本快
   createBasicBlock(func);
-
-  // 校验
   verifyFunction(*func);
 
   my_Module->print(outs(), nullptr);
