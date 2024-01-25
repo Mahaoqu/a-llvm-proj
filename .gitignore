@@ -1,0 +1,15 @@
+# C++ object files
+*.o
+*.obj
+
+# CMake build directory
+build/
+
+# clangd
+.cache
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
