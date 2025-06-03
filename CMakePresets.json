@@ -1,0 +1,21 @@
+{
+    "version": 10,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 23,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "macOS-dev",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_PREFIX_PATH": {
+                    "type": "STRING",
+                    "value": "$env{HOMEBREW_PREFIX}/opt/llvm"
+                }
+            },
+            "binaryDir": "${sourceDir}/build"
+        }
+    ]
+}
